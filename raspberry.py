@@ -47,15 +47,10 @@ def ReadMessage(id):
 WaitForArduino()
 
 while True:
-
-
-
-    ReadMessage(1);
-    # output=MoveMessage(1,counter,counter*2)
-    # ser.write(output.encode())
-    # print("sending -> " + output)
-
-
+    #ReadMessage(1);
+    output=MoveMessage(1,counter,counter*2)
+    ser.write(output.encode())
+    print("sending -> " + output)
 
     counter+=1
     if (counter >= 1000):
