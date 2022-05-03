@@ -1,0 +1,3 @@
+[submodule "Klampt"]
+	path = Klampt
+	url = https://github.com/krishauser/Klampt.git
