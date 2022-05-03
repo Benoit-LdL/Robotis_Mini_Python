@@ -1,3 +1,0 @@
-[submodule "Klampt_libray"]
-	path = B.Virtual_Env/klampt
-	url = git://github.com/krishauser/Klampt.git
