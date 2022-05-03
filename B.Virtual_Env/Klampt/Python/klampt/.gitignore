@@ -1,0 +1,6 @@
+#temporary python build files
+build
+Library
+docs
+
+.vscode
