@@ -1,0 +1,10 @@
+{
+    "name":"Robotis Mini",
+    "modelFile":"robot/rob/robotis_mini.rob",
+    "baseType":"fixed",
+    "controllerFile":"klampt.control.simrobotinterface",
+    "resourceDir":"robot/rob",
+    "properties": {
+        "description":"kinematically simulated robotis Mini humanoid robot."
+    }
+}
