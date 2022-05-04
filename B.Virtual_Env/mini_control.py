@@ -14,7 +14,7 @@ worldFile = "test_world.xml"
 sleepTime = 0.01
 show_labels = False
 max_angle = 45
-movement = False
+movement = True
 ########################################
 
 mini_links = [  15, # l_hip         0       ##############__Mini Link Numbers__##############
@@ -44,20 +44,26 @@ mini_links_r_leg = [63, 67, 71, 75, 79] # Last element is end effector
 
 #################################################
 
-def GetMiniConfig(mini):
+def CM2M(cm):                                   # Convert centimeters to meters (klampt coords are in meter)
+    return cm/100.0
+
+def MM2M(mm):                                   # Convert milimeters to meters (klampt coords are in meter)
+    return mm/1000.0                              
+
+def GetTrimmedConfig(full_config):              # Convert the full config to a trimmed version with only moving links
     full_config = mini.getConfig()
     trimmed_config = []
     for x in range(0,16):
         trimmed_config.append(full_config[mini_links[x]])
     return trimmed_config
 
-def SetMiniConfig(mini,trimmed_config):
+def GetFullConfig(trimmed_config):              # Converted config containing moving links to the complete config
     full_config = [0] * 110
     for x in range(0,len(trimmed_config)):
         full_config[mini_links[x]] = trimmed_config[x]
-    mini.setConfig(full_config)
+    return full_config
 
-def GetLocalPos(robotlink,localpos=[0,0,0]):
+def Local2WorldPos(robotlink,localpos=[0,0,0]):
     obj = ik.objective(robotlink,local=localpos,world=[0,0,0])
     (local,world) = obj.getPosition()
     localToWorld = robotlink.getWorldPosition(local)
@@ -109,20 +115,25 @@ if __name__ == "__main__" :
         new_config = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
 
         new_config[joint] = joint_angle*(math.pi/180)
-        SetMiniConfig(mini,new_config)
+        mini.setConfig(GetFullConfig(new_config))
 
-        vis.add("arm_l_lpos",coordinates.Point(GetLocalPos(arm_l_link, arm_l_localpos)))
-        vis.add("arm_r_lpos",coordinates.Point(GetLocalPos(arm_r_link, arm_r_localpos)))
-        vis.add("leg_l_lpos",coordinates.Point(GetLocalPos(leg_l_link, leg_l_localpos)))
-        vis.add("leg_r_lpos",coordinates.Point(GetLocalPos(leg_r_link, leg_r_localpos)))
+        vis.add("arm_l_lpos",coordinates.Point(Local2WorldPos(arm_l_link, arm_l_localpos)))
+        vis.add("arm_r_lpos",coordinates.Point(Local2WorldPos(arm_r_link, arm_r_localpos)))
+        vis.add("leg_l_lpos",coordinates.Point(Local2WorldPos(leg_l_link, leg_l_localpos)))
+        vis.add("leg_r_lpos",coordinates.Point(Local2WorldPos(leg_r_link, leg_r_localpos)))
         
+
+        testPoint = Local2WorldPos(leg_r_link,leg_r_localpos)
+        testPoint[0] += CM2M(10)                                 #put testpoint x cm in front of l_leg lpos
+        vis.add("TestPoint",coordinates.Point(testPoint))
+
         #this updates the coordinates module
         coordinates.updateFromWorld()
         
         vis.unlock()
 
         print("##__DEBUG__##")
-        print("mini config:     " + str(GetMiniConfig(mini)))
+        print("mini config:     " + str(GetTrimmedConfig(mini.getConfig())))
         print("Angle:           " + str(joint_angle))
         print("Joint;           " + str(joint))
         print("iteration:       " + str(iteration))

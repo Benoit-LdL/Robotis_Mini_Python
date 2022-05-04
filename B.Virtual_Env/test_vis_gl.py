@@ -18,12 +18,21 @@ class GLTest(GLRealtimeProgram):
         self.world.drawGL()
 
     def idle(self):
-        sim = self.sim
+        # sim = self.sim
         traj = self.traj
+        sim = self.sim
+        if sim.getTime() >= 2.0 and sim.getTime()-self.dt < 2.0:
+            q=sim.controller(0).getCommandedConfig()
+            q[7]-=1.0
+            sim.controller(0).setMilestone(q)
+            q[7]+=1.5
+            sim.controller(0).addMilestone(q)
         starttime = 2.0
         if sim.getTime() > starttime:
             (q,dq) = (traj.eval(self.sim.getTime()-starttime),traj.deriv(self.sim.getTime()-starttime))
             sim.controller(0).setPIDCommand(q,dq)
+        #rfs = sim.controller(0).sensor("RF_ForceSensor")
+        #print("Sensor values:",rfs.getMeasurements())
         sim.simulate(self.dt)
         return
 
@@ -35,7 +44,7 @@ if __name__ == "__main__":
     print("   The demo simulates a world and reads a force sensor")
     print("================================================================")
     world = klampt.WorldModel()
-    res = world.readFile("test_world.xml")
+    res = world.readFile("/home/benoit/Desktop/motion-planner/klampt_env/library_examples/data/athlete_fractal_2.xml")
     if not res:
         raise RuntimeError("Unable to load world")
     sim = klampt.Simulator(world)
