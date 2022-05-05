@@ -16,7 +16,3 @@ This is based on the follwoing [thread](https://community.robotis.us/t/rpi-drivi
     <summary>Robotis has been working on a Raspberry pi hat but for now it has only been available for beta testing.</summary>
 <img src="../images/Robotis_Pi_hat.jpeg" alt="Italian Trulli" height="300">
 </details>
-
-### Hardware Setup
-
-### Software Setup

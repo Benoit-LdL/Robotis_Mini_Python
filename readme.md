@@ -10,6 +10,18 @@ I've had a lot of trouble with communication in the ROS version of this project 
 - The Klamp't library [repo](https://github.com/krishauser/Klampt) and [docs](http://motion.cs.illinois.edu/software/klampt/latest/pyklampt_docs/Manual.html)
 
 ## What is the goal of this project?
-**A.** Create a stable and fast connection between the Raspberry Pi and the openCM9.04. 
+**A.** Create a stable and fast connection between the Raspberry Pi and Dynamixel XL320 servos. 
+
+this is the schematic for the connection between the raspberry Pi and the OpenCM9.04.
+<br>
+The OpenCM9.04 is not used to run code. It's only used to make the connection between the Pi and the servos easier.
+<img src="images/circuit.png" alt="Italian Trulli" height="300">
+
+--> Basic motion of XL320 servo using the raspberry.py script and following the above circuit diagram:
+
+[![IMAGE ALT TEXT HERE](https://img.youtube.com/vi/1GMccslpn2s/0.jpg)](https://www.youtube.com/shorts/1GMccslpn2s)
+
+
+<br>
 
 **B.** Create a virtual environment in which I can test Inverse Kinematics, motion planning, etc
