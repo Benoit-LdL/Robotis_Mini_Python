@@ -9,42 +9,7 @@ from numpy import angle, full
 #   see gpu usage in cli:
 #   watch -n 1 nvidia-smi
 
-##############__SETTINGS__##############
-worldFile = "test_world.xml"
-sleepTime = 0.01
-show_labels = False
-max_angle = 45
-movement = True
-########################################
-
-mini_links = [  11, # neck
-                15, # l_hip         0       ##############__Mini Link Numbers__##############
-                19, # l_thigh       1       38  l_shoulder_link                     86  r_shoulder_link
-                23, # l_knee        2       41  l_biceps_link                       89  r_biceps_link
-                27, # l_ankle       3       45  l_elbow_link                        93  r_elbow_link
-                31, # l_foot        4
-
-                38, # l_shoulder    5               15  l_hip_link          63  r_hip_link
-                41, # l_biceps      6               19  l_thigh_link        67  r_thigh_link
-                45, # l_elbow       7               23  l_knee_link         71  r_knee_link
-                    #                               27  l_ankle_link        75  r_ankle_link
-                63, # r_hip         8               31  l_foot_link         79  r_foot_link
-                67, # r_thigh       9
-                71, # r_knee        10
-                75, # r_ankle       11
-                79, # r_foot        12
-
-                86, # r_shoulder    13
-                89, # r_biceps      14
-                93] # r_elbow       15
-
-mini_link_neck = 11
-mini_links_l_arm = [38, 41, 45]         # Last element is end effector
-mini_links_r_arm = [86, 89, 93]         # Last element is end effector
-mini_links_l_leg = [15, 19, 23, 27, 31] # Last element is end effector
-mini_links_r_leg = [63, 67, 71, 75, 79] # Last element is end effector
-
-#################################################
+##############__FUNCTIONS & METHODS__##############
 
 def CM2M(cm):                                   # Convert centimeters to meters (klampt coords are in meter)
     return cm/100.0
@@ -76,6 +41,50 @@ def Local2WorldPos(robotlink,localpos=[0,0,0]):
 
     return localToWorld
 
+###################################################
+##############__SETTINGS__##############
+worldFile = "test_world.xml"
+sleepTime = 0.01
+show_labels = False
+max_angle = 45
+movement = False
+########################################
+
+mini_links = [  11, # neck
+                15, # l_hip         0       ##############__Mini Link Numbers__##############
+                19, # l_thigh       1       38  l_shoulder_link                     86  r_shoulder_link
+                23, # l_knee        2       41  l_biceps_link                       89  r_biceps_link
+                27, # l_ankle       3       45  l_elbow_link                        93  r_elbow_link
+                31, # l_foot        4
+
+                38, # l_shoulder    5               15  l_hip_link          63  r_hip_link
+                41, # l_biceps      6               19  l_thigh_link        67  r_thigh_link
+                45, # l_elbow       7               23  l_knee_link         71  r_knee_link
+                    #                               27  l_ankle_link        75  r_ankle_link
+                63, # r_hip         8               31  l_foot_link         79  r_foot_link
+                67, # r_thigh       9
+                71, # r_knee        10
+                75, # r_ankle       11
+                79, # r_foot        12
+
+                86, # r_shoulder    13
+                89, # r_biceps      14
+                93] # r_elbow       15
+
+mini_link_neck = 11
+mini_links_l_arm = [38, 41, 45]         # Last element is end effector
+mini_links_r_arm = [86, 89, 93]         # Last element is end effector
+mini_links_l_leg = [15, 19, 23, 27, 31] # Last element is end effector
+mini_links_r_leg = [63, 67, 71, 75, 79] # Last element is end effector
+
+neck_localpos   = [0,           0,          0]   # end effector local position origin offset
+arm_l_localpos  = [0,           -MM2M(75),  0]   # end effector local position origin offset
+arm_r_localpos  = [0,           -MM2M(75),  0]   # end effector local position origin offset
+leg_l_localpos  = [-MM2M(30),   -MM2M(9),   MM2M(30)]   # end effector local position origin offset
+leg_r_localpos  = [MM2M(30),    -MM2M(9),   MM2M(30)]   # end effector local position origin offset
+
+#################################################
+
 if __name__ == "__main__" :
     world = WorldModel()
     res = world.readFile(worldFile)
@@ -96,12 +105,6 @@ if __name__ == "__main__" :
     
 
     coordinates.setWorldModel(world)
-
-    neck_localpos   = [0,0,0]   # end effector local position origin offset
-    arm_l_localpos  = [0,0,0]   # end effector local position origin offset
-    arm_r_localpos  = [0,0,0]   # end effector local position origin offset
-    leg_l_localpos  = [0,0,0]   # end effector local position origin offset
-    leg_r_localpos  = [0,0,0]   # end effector local position origin offset
 
     vis.add("world",world)
     
