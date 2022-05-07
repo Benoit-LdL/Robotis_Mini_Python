@@ -60,7 +60,7 @@ elif MY_DXL == 'XL320':
     ADDR_GOAL_POSITION          = 30
     ADDR_PRESENT_POSITION       = 37
     DXL_MINIMUM_POSITION_VALUE  = 0         # Refer to the CW Angle Limit of product eManual
-    DXL_MAXIMUM_POSITION_VALUE  = 1023      # Refer to the CCW Angle Limit of product eManual
+    DXL_MAXIMUM_POSITION_VALUE  = 200 #1023      # Refer to the CCW Angle Limit of product eManual
     BAUDRATE                    = 1000000   # Default Baudrate of XL-320 is 1Mbps
 
 # DYNAMIXEL Protocol Version (1.0 / 2.0)
@@ -72,7 +72,7 @@ DXL_ID                      = 1
 
 # Use the actual port assigned to the U2D2.
 # ex) Windows: "COM*", Linux: "/dev/ttyUSB*", Mac: "/dev/tty.usbserial-*"
-DEVICENAME                  = '/dev/ttyAMA0'      # '/dev/ttyUSB0'
+DEVICENAME                  = '/dev/serial0'# '/dev/ttyAMA0'      # '/dev/ttyUSB0'
 
 TORQUE_ENABLE               = 1     # Value for enabling the torque
 TORQUE_DISABLE              = 0     # Value for disabling the torque
