@@ -17,7 +17,8 @@ max_angle = 45
 movement = True
 ########################################
 
-mini_links = [  15, # l_hip         0       ##############__Mini Link Numbers__##############
+mini_links = [  11, # neck
+                15, # l_hip         0       ##############__Mini Link Numbers__##############
                 19, # l_thigh       1       38  l_shoulder_link                     86  r_shoulder_link
                 23, # l_knee        2       41  l_biceps_link                       89  r_biceps_link
                 27, # l_ankle       3       45  l_elbow_link                        93  r_elbow_link
@@ -37,6 +38,7 @@ mini_links = [  15, # l_hip         0       ##############__Mini Link Numbers__#
                 89, # r_biceps      14
                 93] # r_elbow       15
 
+mini_link_neck = 11
 mini_links_l_arm = [38, 41, 45]         # Last element is end effector
 mini_links_r_arm = [86, 89, 93]         # Last element is end effector
 mini_links_l_leg = [15, 19, 23, 27, 31] # Last element is end effector
@@ -58,7 +60,7 @@ def GetTrimmedConfig(full_config):              # Convert the full config to a t
     return trimmed_config
 
 def GetFullConfig(trimmed_config):              # Converted config containing moving links to the complete config
-    full_config = [0] * 110
+    full_config = [0] * mini.numLinks()
     for x in range(0,len(trimmed_config)):
         full_config[mini_links[x]] = trimmed_config[x]
     return full_config
@@ -81,25 +83,25 @@ if __name__ == "__main__" :
 
     mini        = world.robot(0)
 
-    numLinks    = mini.numLinks() 
-    numDrivers  = mini.numDrivers()
-
     arm_l_linkIndex = mini_links_l_arm[len(mini_links_l_arm)-1]
     arm_r_linkIndex = mini_links_r_arm[len(mini_links_r_arm)-1]
     leg_l_linkIndex = mini_links_l_leg[len(mini_links_l_leg)-1]
     leg_r_linkIndex = mini_links_r_leg[len(mini_links_r_leg)-1]
 
-    arm_l_link = mini.link(arm_l_linkIndex)
-    arm_r_link = mini.link(arm_r_linkIndex)
-    leg_l_link = mini.link(leg_l_linkIndex)
-    leg_r_link = mini.link(leg_r_linkIndex)
+    neck_link   = mini.link(mini_link_neck) 
+    arm_l_link  = mini.link(arm_l_linkIndex)
+    arm_r_link  = mini.link(arm_r_linkIndex)
+    leg_l_link  = mini.link(leg_l_linkIndex)
+    leg_r_link  = mini.link(leg_r_linkIndex)
+    
 
     coordinates.setWorldModel(world)
 
-    arm_l_localpos = [0,0,0]    # end effector local position origin offset
-    arm_r_localpos = [0,0,0]    #
-    leg_l_localpos = [0,0,0]    #
-    leg_r_localpos = [0,0,0]    #
+    neck_localpos   = [0,0,0]   # end effector local position origin offset
+    arm_l_localpos  = [0,0,0]   # end effector local position origin offset
+    arm_r_localpos  = [0,0,0]   # end effector local position origin offset
+    leg_l_localpos  = [0,0,0]   # end effector local position origin offset
+    leg_r_localpos  = [0,0,0]   # end effector local position origin offset
 
     vis.add("world",world)
     
@@ -112,11 +114,12 @@ if __name__ == "__main__" :
     while vis.shown():
         vis.lock()
         
-        new_config = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+        new_config = [0] * mini.numDrivers()
 
         new_config[joint] = joint_angle*(math.pi/180)
         mini.setConfig(GetFullConfig(new_config))
 
+        vis.add("neck_lpos",coordinates.Point(Local2WorldPos(neck_link, neck_localpos)))
         vis.add("arm_l_lpos",coordinates.Point(Local2WorldPos(arm_l_link, arm_l_localpos)))
         vis.add("arm_r_lpos",coordinates.Point(Local2WorldPos(arm_r_link, arm_r_localpos)))
         vis.add("leg_l_lpos",coordinates.Point(Local2WorldPos(leg_l_link, leg_l_localpos)))
@@ -134,6 +137,8 @@ if __name__ == "__main__" :
 
         print("##__DEBUG__##")
         print("mini config:     " + str(GetTrimmedConfig(mini.getConfig())))
+        print("# joints:        " + str(mini.numLinks()))
+        print("# Drivers:       " + str(mini.numDrivers()))
         print("Angle:           " + str(joint_angle))
         print("Joint;           " + str(joint))
         print("iteration:       " + str(iteration))
@@ -146,7 +151,7 @@ if __name__ == "__main__" :
             joint       +=1
             joint_angle = 0
 
-        if joint >= 16:
+        if joint > mini.numDrivers()-1:
             joint       = 0
             joint_angle = 0
 

@@ -123,8 +123,9 @@
       <inertia ixx="1.0e-12" ixy="0.0" ixz="0.0" iyy="1.0e-12" iyz="0.0" izz="1.0e-12"/>
     </inertial>
   </link>
-  <joint name="neck_joint" type="fixed">
+  <joint name="neck_joint" type="revolute"> <!--fixed-->
     <axis xyz="0 0 1"/>
+    <limit effort="0.1" lower="-1.5707963267948966" upper="1.5707963267948966" velocity="11.938052083641214"/>  <!--remove this line if joint is fixed-->
     <origin rpy="0 0 0" xyz="0 0 0"/>
     <parent link="neck_axis_link"/>
     <child link="neck_link"/>
@@ -2427,5 +2428,5 @@
     </collision>
   </link>
   <!-- KLAMP'T XTRA LINES-->
-  <klampt use_vis_geom="1"/>  <!--freeze_root_link="1"-->
+  <klampt use_vis_geom="1"/>  <!--freeze_root_link="1"-->                        
 </robot>
