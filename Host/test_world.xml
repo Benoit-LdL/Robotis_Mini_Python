@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <world>
-  <terrain file="terrains/block.off">
+  <terrain file="terrains/block.off" scale="0.3 0.3 1">
     <appearance color="0.9 0.6 0.6 1" />
   </terrain>
 

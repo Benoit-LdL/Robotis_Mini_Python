@@ -46,8 +46,8 @@ def Local2WorldPos(robotlink,localpos=[0,0,0]):
 worldFile = "test_world.xml"
 sleepTime = 0.01
 show_labels = False
-max_angle = 45
-movement = False
+max_angle = 60
+movement = True
 ########################################
 
 mini_links = [  11, # neck
