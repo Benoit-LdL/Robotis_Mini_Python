@@ -1,7 +1,10 @@
 #!/usr/bin/env python3
 
 from klampt import *
+from klampt import IKObjective, IKSolver, vis, math
 from klampt.model import coordinates, ik
+from klampt.math import so3
+
 import time, math
 
 from numpy import angle, full
@@ -9,45 +12,32 @@ from numpy import angle, full
 #   see gpu usage in cli:
 #   watch -n 1 nvidia-smi
 
-##############__FUNCTIONS & METHODS__##############
+############################################################################################
 
+#implementation = 1      #No robot movement             | IKSUCCESS=N.A
+implementation = 1.1    #No max deviation & constraints| IKSUCCESS=true
+#implementation = 1.2    #Max deviation                 | IKSUCCESS=true
+#implementation = 1.3    #Max deviation & constraints   | IKSUCCESS=false
+#implementation = 2      #using IKSOLVER & constraints  | IKSUCCESS=true
+
+############################################################################################
+
+###################################################
+##############__SETTINGS__##############
+worldFile   = "test_world.xml"
+sleepTime   = 0.01
+show_labels = False
+max_angle   = 60
+movement    = False
+footAngle   = 90
+
+##############__FUNCTIONS & METHODS__############## 
 def CM2M(cm):                                   # Convert centimeters to meters (klampt coords are in meter)
     return cm/100.0
 
 def MM2M(mm):                                   # Convert milimeters to meters (klampt coords are in meter)
-    return mm/1000.0                              
+    return mm/1000.0  
 
-def GetTrimmedConfig(full_config):              # Convert the full config to a trimmed version with only moving links
-    full_config = mini.getConfig()
-    trimmed_config = []
-    for x in range(0,16):
-        trimmed_config.append(full_config[mini_links[x]])
-    return trimmed_config
-
-def GetFullConfig(trimmed_config):              # Converted config containing moving links to the complete config
-    full_config = [0] * mini.numLinks()
-    for x in range(0,len(trimmed_config)):
-        full_config[mini_links[x]] = trimmed_config[x]
-    return full_config
-
-def Local2WorldPos(robotlink,localpos=[0,0,0]):
-    obj = ik.objective(robotlink,local=localpos,world=[0,0,0])
-    (local,world) = obj.getPosition()
-    localToWorld = robotlink.getWorldPosition(local)
-    
-    # print("## Debug GetLocalPos func ##")
-    # print("local to world: " +  str(localToWorld))
-    # print("############################")
-
-    return localToWorld
-
-###################################################
-##############__SETTINGS__##############
-worldFile = "test_world.xml"
-sleepTime = 0.01
-show_labels = False
-max_angle = 60
-movement = True
 ########################################
 
 mini_links = [  11, # neck
@@ -85,6 +75,117 @@ leg_r_localpos  = [MM2M(30),    -MM2M(9),   MM2M(30)]   # end effector local pos
 
 #################################################
 
+
+##############__FUNCTIONS & METHODS__##############                            
+
+def GetTrimmedConfig(full_config):              # Convert the full config to a trimmed version with only moving links
+    full_config = mini.getConfig()
+    trimmed_config = []
+    for x in range(0,16):
+        trimmed_config.append(full_config[mini_links[x]])
+    return trimmed_config
+
+def GetFullConfig(trimmed_config):              # Converted config containing moving links to the complete config
+    full_config = [0] * mini.numLinks()
+    for x in range(0,len(trimmed_config)):
+        full_config[mini_links[x]] = trimmed_config[x]
+    return full_config
+
+def Local2WorldPos(robotlink,localpos=[0,0,0]):
+    obj = ik.objective(robotlink,local=localpos,world=[0,0,0])
+    (local,world) = obj.getPosition()
+    localToWorld = robotlink.getWorldPosition(local)
+    
+    # print("## Debug GetLocalPos func ##")
+    # print("local to world: " +  str(localToWorld))
+    # print("############################")
+
+    return localToWorld
+
+def solve_ik(robotlink,localpos,worldpos):
+
+    linkindex = robotlink.index
+    robot = robotlink.robot()
+    maxIters = 100
+    tol = 1e-3 #1e-3
+    restarts = 100
+    maxDev = 50
+    IKSucces = False
+
+    (R,t) = robotlink.getTransform() 
+    (axis,angle) = so3.axis_angle(R)
+    
+    ######################################
+    ## Implementation 1: No robot movement
+    ######################################
+    if (implementation == 1):
+        robot.setConfig(robot.setConfig([0]*robot.numLinks()))
+        (R,t) = robotlink.getTransform()
+        print(R)
+
+    #######################################
+    ## Implementation 1.1: No max deviation
+    #######################################
+    if (implementation == 1.1):
+        print("===========================================================")
+        print("__Implementation 1.1__")
+        obj = ik.objective(robotlink,local=localpos,world=worldpos)
+        obj2 = ik.objective(robotlink,R=so3.from_axis_angle(([0,1,0],(footAngle*(math.pi/180)))),t=t)   # [0,1,0] choose axis | toolAngle is the angle in degrees being converted to radians
+        s = ik.solver([obj,obj2])
+        print("Active DOFs:         " , str(s.getActiveDofs()))
+        print("Setting active DOFs to right leg...")
+        s.setActiveDofs(mini_links_r_leg)
+        print("New active DOFs:     " , str(s.getActiveDofs()))
+        print("===========================================================")
+        s.setJointLimits([],[])
+        s.setMaxIters = maxIters
+        s.setTolerance = tol
+        IKSucces = s.solve()
+
+    ####################################
+    ## Implementation 1.2: Max deviation
+    ####################################
+    if (implementation == 1.2):
+        obj = ik.objective(robotlink,local=localpos,world=worldpos)
+        IKSucces = ik.solve_nearby(obj,maxDev,maxIters,tol,numRestarts=restarts)
+
+    ##################################################
+    ## Implementation 1.3: Max deviation & constraints
+    ##################################################
+    if (implementation == 1.3):
+        obj = ik.objective(robotlink,local=localpos,world=worldpos)
+        IKSucces = ik.solve_nearby(obj,maxDev,maxIters,tol)
+
+
+    ###################################
+    ## Implementation 2: using IKSOLVER & constraints
+    ###################################
+    if (implementation == 2):
+        obj = coordinates.ik_objective(coordinates.getPoint("ik-constraint-local"),coordinates.getPoint("ik-constraint-world"))
+        s = IKSolver(robot)
+        s.add(obj)
+
+        s.setMaxIters = maxIters
+        s.setTolerance = tol
+        IKSucces = s.solve()
+
+    #################
+    ## Debug & Output
+    #################
+    print()
+    print("___________________")
+    print("IK succes: " + str(IKSucces))
+    #print("IK residual: " + str(s.getResidual()))
+    #print("IK #iters: " + str(s.lastSolveIters()))
+    #print("IK jacobian: " + str(s.getJacobian()))
+    print("robot config: "  + str(robot.getConfig()))
+    print("angle: "+ str(angle*(180/math.pi)))
+    print("___________________")
+    print()
+    return robot.getConfig()
+
+
+
 if __name__ == "__main__" :
     world = WorldModel()
     res = world.readFile(worldFile)
@@ -117,10 +218,17 @@ if __name__ == "__main__" :
     while vis.shown():
         vis.lock()
         
-        new_config = [0] * mini.numDrivers()
+        #new_config = [0] * mini.numDrivers()
+        #new_config[joint] = joint_angle*(math.pi/180)
+        #mini.setConfig(GetFullConfig(new_config))
 
-        new_config[joint] = joint_angle*(math.pi/180)
-        mini.setConfig(GetFullConfig(new_config))
+        goalpoint = [0,0,0]
+
+        goalpoint[0],goalpoint[1],goalpoint[2] = [0,CM2M(-4),CM2M(2)]
+        q = solve_ik(leg_r_link,leg_r_localpos,goalpoint)
+        mini.setConfig(q)
+        
+        vis.add("GOAL",coordinates.Point(goalpoint))
 
         vis.add("neck_lpos",coordinates.Point(Local2WorldPos(neck_link, neck_localpos)))
         vis.add("arm_l_lpos",coordinates.Point(Local2WorldPos(arm_l_link, arm_l_localpos)))
@@ -140,10 +248,11 @@ if __name__ == "__main__" :
 
         print("##__DEBUG__##")
         print("mini config:     " + str(GetTrimmedConfig(mini.getConfig())))
+        print("q:               " + str(q))
         print("# joints:        " + str(mini.numLinks()))
         print("# Drivers:       " + str(mini.numDrivers()))
-        print("Angle:           " + str(joint_angle))
-        print("Joint;           " + str(joint))
+        #print("Angle:           " + str(joint_angle))
+        #print("Joint;           " + str(joint))
         print("iteration:       " + str(iteration))
         print("##############")
 
