@@ -40,28 +40,28 @@ def MM2M(mm):                                   # Convert milimeters to meters (
 
 
 ########################################
-#       link number | body part | trimmed link number | servo ID | Min Max servo angle
-mini_links = [  11, # neck        0     0   -90 90
+#               link number |   body part |     trimmed link number | servo ID |    Min Max servo angle
+mini_links = [  11,             # neck          0                       0           -90 90
                 
-                15, # l_hip       1     0   -45 90      ##############__Mini Link Numbers__##############
-                19, # l_thigh     2     1   -xx xx      38  l_shoulder_link                     86  r_shoulder_link
-                23, # l_knee      3     2   -xx xx      41  l_biceps_link                       89  r_biceps_link
-                27, # l_ankle     4     3   -xx xx      45  l_elbow_link                        93  r_elbow_link
-                31, # l_foot      5     4   -xx xx    
+                15,             # l_hip         1                       8           -45 90      ##############__Mini Link Numbers__##############
+                19,             # l_thigh       2                       10          -xx xx      38  l_shoulder_link                     86  r_shoulder_link
+                23,             # l_knee        3                       12          -xx xx      41  l_biceps_link                       89  r_biceps_link
+                27,             # l_ankle       4                       14          -xx xx      45  l_elbow_link                        93  r_elbow_link
+                31,             # l_foot        5                       16          -xx xx    
 
-                38, # l_shoulder  6     5   -90 90                  15  l_hip_link          63  r_hip_link
-                41, # l_biceps    7     6   -90 90                  19  l_thigh_link        67  r_thigh_link
-                45, # l_elbow     8     7   -90 90                  23  l_knee_link         71  r_knee_link
-                    #                                               27  l_ankle_link        75  r_ankle_link
-                63, # r_hip       9     8   -45 90                  31  l_foot_link         79  r_foot_link
-                67, # r_thigh     10    9   -xx xx
-                71, # r_knee      11    10  -xx xx
-                75, # r_ankle     12    11  -xx xx
-                79, # r_foot      13    12  -xx xx
+                38,             # l_shoulder    6                       2           -90 90                  15  l_hip_link          63  r_hip_link
+                41,             # l_biceps      7                       4           -90 90                  19  l_thigh_link        67  r_thigh_link
+                45,             # l_elbow       8                       6           -90 90                  23  l_knee_link         71  r_knee_link
+                                #                                                                   27  l_ankle_link        75  r_ankle_link
+                63,             # r_hip         9                       7           -45 90                  31  l_foot_link         79  r_foot_link
+                67,             # r_thigh       10                      9           -xx xx
+                71,             # r_knee        11                      11          -xx xx
+                75,             # r_ankle       12                      13          -xx xx
+                79,             # r_foot        13                      15          -xx xx
 
-                86, # r_shoulder  14    13  -90 90
-                89, # r_biceps    15    14  -xx xx
-                93] # r_elbow     16    15  -xx xx
+                86,             # r_shoulder    14                      1           -90 90
+                89,             # r_biceps      15                      3           -xx xx
+                93]             # r_elbow       16                      5           -xx xx
 
 mini_link_neck = 11
 mini_links_l_arm = [38, 41, 45]         # Last element is end effector
