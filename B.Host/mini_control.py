@@ -27,7 +27,7 @@ implementation = 1.1    #No max deviation & constraints| IKSUCCESS=true
 worldFile   = "test_world.xml"
 sleepTime   = 0.01
 show_labels = False
-max_angle   = 60
+max_angle   = 90
 movement    = False
 footAngle   = 90
 
@@ -38,28 +38,30 @@ def CM2M(cm):                                   # Convert centimeters to meters 
 def MM2M(mm):                                   # Convert milimeters to meters (klampt coords are in meter)
     return mm/1000.0  
 
+
 ########################################
+#       link number | body part | trimmed link number | servo ID | Min Max servo angle
+mini_links = [  11, # neck        0     0   -90 90
+                
+                15, # l_hip       1     0   -45 90      ##############__Mini Link Numbers__##############
+                19, # l_thigh     2     1   -xx xx      38  l_shoulder_link                     86  r_shoulder_link
+                23, # l_knee      3     2   -xx xx      41  l_biceps_link                       89  r_biceps_link
+                27, # l_ankle     4     3   -xx xx      45  l_elbow_link                        93  r_elbow_link
+                31, # l_foot      5     4   -xx xx    
 
-mini_links = [  11, # neck
-                15, # l_hip         0       ##############__Mini Link Numbers__##############
-                19, # l_thigh       1       38  l_shoulder_link                     86  r_shoulder_link
-                23, # l_knee        2       41  l_biceps_link                       89  r_biceps_link
-                27, # l_ankle       3       45  l_elbow_link                        93  r_elbow_link
-                31, # l_foot        4
+                38, # l_shoulder  6     5   -90 90                  15  l_hip_link          63  r_hip_link
+                41, # l_biceps    7     6   -90 90                  19  l_thigh_link        67  r_thigh_link
+                45, # l_elbow     8     7   -90 90                  23  l_knee_link         71  r_knee_link
+                    #                                               27  l_ankle_link        75  r_ankle_link
+                63, # r_hip       9     8   -45 90                  31  l_foot_link         79  r_foot_link
+                67, # r_thigh     10    9   -xx xx
+                71, # r_knee      11    10  -xx xx
+                75, # r_ankle     12    11  -xx xx
+                79, # r_foot      13    12  -xx xx
 
-                38, # l_shoulder    5               15  l_hip_link          63  r_hip_link
-                41, # l_biceps      6               19  l_thigh_link        67  r_thigh_link
-                45, # l_elbow       7               23  l_knee_link         71  r_knee_link
-                    #                               27  l_ankle_link        75  r_ankle_link
-                63, # r_hip         8               31  l_foot_link         79  r_foot_link
-                67, # r_thigh       9
-                71, # r_knee        10
-                75, # r_ankle       11
-                79, # r_foot        12
-
-                86, # r_shoulder    13
-                89, # r_biceps      14
-                93] # r_elbow       15
+                86, # r_shoulder  14    13  -90 90
+                89, # r_biceps    15    14  -xx xx
+                93] # r_elbow     16    15  -xx xx
 
 mini_link_neck = 11
 mini_links_l_arm = [38, 41, 45]         # Last element is end effector
@@ -214,21 +216,20 @@ if __name__ == "__main__" :
     vis.show()
     iteration   = 0
     joint_angle = 0.0
-    joint       = 0
+    joint       = 2
     while vis.shown():
         vis.lock()
         
-        #new_config = [0] * mini.numDrivers()
-        #new_config[joint] = joint_angle*(math.pi/180)
-        #mini.setConfig(GetFullConfig(new_config))
+        new_config = [0] * mini.numDrivers()
+        new_config[joint] = joint_angle*(math.pi/180)
+        mini.setConfig(GetFullConfig(new_config))
 
-        goalpoint = [0,0,0]
-
-        goalpoint[0],goalpoint[1],goalpoint[2] = [0,CM2M(-4),CM2M(2)]
-        q = solve_ik(leg_r_link,leg_r_localpos,goalpoint)
-        mini.setConfig(q)
-        
-        vis.add("GOAL",coordinates.Point(goalpoint))
+        # Inverse Kinematics
+        # goalpoint = [0,0,0]
+        # goalpoint[0],goalpoint[1],goalpoint[2] = [0,CM2M(-4),CM2M(2)]
+        # q = solve_ik(leg_r_link,leg_r_localpos,goalpoint)
+        # mini.setConfig(q)
+        # vis.add("GOAL",coordinates.Point(goalpoint))
 
         vis.add("neck_lpos",coordinates.Point(Local2WorldPos(neck_link, neck_localpos)))
         vis.add("arm_l_lpos",coordinates.Point(Local2WorldPos(arm_l_link, arm_l_localpos)))
@@ -248,11 +249,11 @@ if __name__ == "__main__" :
 
         print("##__DEBUG__##")
         print("mini config:     " + str(GetTrimmedConfig(mini.getConfig())))
-        print("q:               " + str(q))
+        #print("q:               " + str(q))
         print("# joints:        " + str(mini.numLinks()))
         print("# Drivers:       " + str(mini.numDrivers()))
-        #print("Angle:           " + str(joint_angle))
-        #print("Joint;           " + str(joint))
+        print("Angle:           " + str(joint_angle))
+        print("Joint;           " + str(joint))
         print("iteration:       " + str(iteration))
         print("##############")
 
@@ -260,7 +261,7 @@ if __name__ == "__main__" :
             joint_angle += 1
 
         if joint_angle > max_angle:
-            joint       +=1
+            #joint       +=1
             joint_angle = 0
 
         if joint > mini.numDrivers()-1:
