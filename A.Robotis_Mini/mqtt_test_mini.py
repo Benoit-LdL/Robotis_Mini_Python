@@ -5,14 +5,28 @@ import time
 
 broker_address      = "localhost"
 client_id           = "1"
-topic_connection    = "mini/connection" 
-topic_data          = "mini/data"
+
+MQTT_TOPIC = ["mini/config",
+                "mini/data",
+                "mini/out"]
+
+MQTT_SUBS = []
+MQTT_SUBS.append((MQTT_TOPIC[0],0))
+MQTT_SUBS.append((MQTT_TOPIC[1],0))
 
 
 
 def on_message(client, userdata, message):
-    if message.topic == topic_connection and message.payload.decode("utf-8"):
+    # print("message topic: " , message.topic)
+    
+    if message.topic == MQTT_TOPIC[0]:       # message on mini/config
         print("Topic:", message.topic, "| message: ", str(message.payload.decode("utf-8")))
+        print("Publishing on topic " , str(MQTT_TOPIC[2]))
+        client.publish(MQTT_TOPIC[2],"OK")
+
+    elif message.topic == MQTT_TOPIC[1]:
+        print("Topic:", message.topic, "| message: ", str(message.payload.decode("utf-8")))
+
 
 print("creating new instance")
 client = mqtt.Client(client_id)                 #create new instance
@@ -20,7 +34,7 @@ client.on_message=on_message                    #attach function to callback
 print("connecting to broker")
 client.connect(broker_address)                  #connect to broker
 client.loop_start()                             #start the loop
-print("Subscribing to topic",topic_connection)
-client.subscribe(topic_connection)
+print("Subscribing to topics")
+client.subscribe(MQTT_SUBS)
 time.sleep(200)                                 # wait
 client.loop_stop()                              #stop the loop
