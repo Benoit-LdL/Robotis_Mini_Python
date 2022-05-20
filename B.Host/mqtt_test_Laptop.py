@@ -8,6 +8,8 @@ import subprocess
 ###############__DEFAULT_VALUES__###############
 
 MQTT_BROKER                 = "0.0.0.0"
+MQTT_BROKER_INTERNAL        = "192.168.1.15"
+MQTT_BROKER_EXTERNAL        = "192.168.50.5"
 CLIENT_ID                   = "2"
 mqtt.Client.connected_flag  = False
 MQTT_TOPIC = ["mini/config",
@@ -26,11 +28,11 @@ def Check_wifi_name():
     print("==================================")
     if (wifi_name.find("Robotis_Mini") != -1):
         print("Connected to Robotis Mini Hotspot!")
-        MQTT_BROKER      = "192.168.50.5"
+        MQTT_BROKER      = MQTT_BROKER_EXTERNAL
         
     elif (wifi_name.find("LdL") != -1):
         print("Connected to LdL Wifi!")
-        MQTT_BROKER      = "192.168.1.15"
+        MQTT_BROKER      = MQTT_BROKER_INTERNAL
     else:
         print("Connected to unknown Wifi!")
         print("Aborting script...")
@@ -87,11 +89,12 @@ if __name__ == "__main__":
         while True:
             testConfig = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]
             output = str(testConfig)
-            print("Publishing '", str(output), "' to topic",MQTT_TOPIC[0])
+            # print("Publishing '", str(output), "' to topic",MQTT_TOPIC[0])
             WAITING_RESPONSE = True
             
-            client.publish(MQTT_TOPIC[0],output)
             while WAITING_RESPONSE == True:
+                print("Publishing...")
+                client.publish(MQTT_TOPIC[0],output)
                 print("waiting for a response...")
                 time.sleep(0.1)
             
