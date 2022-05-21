@@ -45,9 +45,11 @@ ADDR_GOAL_POSITION          = 30
 ADDR_PRESENT_POSITION       = 37
 ADDR_VOLTAGE                = 45
 ADDR_TEMPERATURE            = 46
+ADDR_LED                    = 25
 
-DXL_MINIMUM_POSITION_VALUE  = 512       # Refer to the CW Angle Limit of product eManual
-DXL_MAXIMUM_POSITION_VALUE  = 400 #1023 # Refer to the CCW Angle Limit of product eManual
+DXL_ZERO_POSITION           = 512                       # all servo zero pos are half of limit : 1024/2
+DXL_MINIMUM_POSITION_VALUE  = DXL_ZERO_POSITION         # Refer to the CW Angle Limit of product eManual
+DXL_MAXIMUM_POSITION_VALUE  = 400                       #1023 # Refer to the CCW Angle Limit of product eManual
 
 # DYNAMIXEL Protocol Version (1.0 / 2.0)
 # https://emanual.robotis.com/docs/en/dxl/protocol2/
@@ -63,9 +65,11 @@ TORQUE_ENABLE               = 1     # Value for enabling the torque
 TORQUE_DISABLE              = 0     # Value for disabling the torque
 DXL_MOVING_STATUS_THRESHOLD = 20    # Dynamixel moving status threshold
 
+
 index = 0
 dxl_goal_position = [DXL_MINIMUM_POSITION_VALUE, DXL_MAXIMUM_POSITION_VALUE]         # Goal position
 
+COLOR_OFF, COLOR_RED, COLOR_GREEN, COLOR_YELLOW, COLOR_BLUE, COLOR_PURPLE, COLOR_CYAN, COLOR_WHITE       = 0,1,2,3,4,5,6,7
 
 # Initialize PortHandler instance
 # Set the port path
@@ -99,6 +103,14 @@ def BroadCastPing():
         DXL_ACTIVE_ID_LIST.append(dxl_id)
         print("Active servos:   " , str(DXL_ACTIVE_ID_LIST))
 
+def GetInactiveServos():
+    global DXL_ID_LIST, DXL_ACTIVE_ID_LIST
+    output = []
+    for i in range(len(DXL_ID_LIST)):
+        if DXL_ID_LIST[i] not in DXL_ACTIVE_ID_LIST:
+            output.append(DXL_ID_LIST[i])  
+    return output
+
 def ReadData(id,address):
     global portHandler
     data, dxl_comm_result, dxl_error = packetHandler.read2ByteTxRx(portHandler, id, address)
@@ -113,6 +125,17 @@ def ReadBulk(id_list,adress):
     for id in id_list:
         data.append(ReadData(id,adress))
     return data
+
+def WriteData(id,address,data):
+    dxl_comm_result, dxl_error = packetHandler.write2ByteTxRx(portHandler, id, address, data)
+    if dxl_comm_result != COMM_SUCCESS:
+        print("%s" % packetHandler.getTxRxResult(dxl_comm_result))
+    elif dxl_error != 0:
+        print("%s" % packetHandler.getRxPacketError(dxl_error))
+
+def WriteBulk(id_list,adress,data_list):
+    for i in range(len(id_list)):
+        WriteData(id_list[i],adress,data_list[i])
 
 #################################################
 
@@ -148,16 +171,33 @@ else:
 
 BroadCastPing()
 
+#Turn on led of servo 1
+print("##############")
+print("testing LED")
+WriteBulk(DXL_ACTIVE_ID_LIST,ADDR_LED,[COLOR_OFF] * len(DXL_ACTIVE_ID_LIST))
+
+print("##############")
+
 while len(DXL_ACTIVE_ID_LIST) > 1:
 
     voltage_list        = ReadBulk(DXL_ACTIVE_ID_LIST,ADDR_VOLTAGE)
     temperature_list    = ReadBulk(DXL_ACTIVE_ID_LIST,ADDR_TEMPERATURE)
     postion_list        = ReadBulk(DXL_ACTIVE_ID_LIST,ADDR_PRESENT_POSITION)
-    print("V:   " , str(voltage_list))
-    print("T:   " , str(temperature_list))
-    print("POS: " , str(postion_list))
+    
+    print("##__DEBUG__##")
+    print("# Active servos servos:  " , str(len(DXL_ACTIVE_ID_LIST)))
+    print("Offline servos:          " , str(GetInactiveServos()))
+    print("V:           " , str(voltage_list))
+    print("T:           " , str(temperature_list))
+    print("POS:         " , str(postion_list))
+    print("#############")
+    time.sleep(0.1)
 
-    time.sleep(0.4)
+
+    #
+    # 0.1 delay = 38 / 36 
+    # 0.4 delay = 37
+
 
     # print("Press any key to continue! (or press ESC to quit!)")
     # if getch() == chr(0x1b):
