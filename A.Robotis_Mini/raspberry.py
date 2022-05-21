@@ -1,19 +1,17 @@
 #!/usr/bin/env python3
-#===========================================================#
-# Copy of DynamixelSDK/python/tests/protocol2_0/read_write.py
-#===========================================================#
+
 import os
 import time
 import sys, tty, termios
-from dynamixel_sdk import * # Uses Dynamixel SDK library
+from dynamixel_sdk import *
 
 fd = sys.stdin.fileno()
 old_settings = termios.tcgetattr(fd)
 
 #
-# Voltage       = 8.40V
-# Max Current   = 0.75A
+# Voltage       = ~7.40V
 #
+
 ########################################
 # Body part | servo ID
 # neck        -1
@@ -37,10 +35,13 @@ old_settings = termios.tcgetattr(fd)
 # l_knee      12
 # l_ankle     14
 # l_foot      16 
-#********* DYNAMIXEL Model definition *********
-MY_DXL = 'XL320'                        # [WARNING] Operating Voltage : 7.4V
-BAUDRATE                    = 1000000   # Default Baudrate of XL-320 is 1Mbps
 
+#********* DYNAMIXEL XL320 Model definition *********
+PROTOCOL_VERSION            = 2.0
+BAUDRATE                    = 1000000           # Default Baudrate of XL-320 is 1Mbps
+DEVICENAME                  = '/dev/serial0'    # '/dev/ttyAMA0'
+
+# XL320 RAM control adresses
 ADDR_TORQUE_ENABLE          = 24
 ADDR_LED                    = 25
 ADDR_GOAL_POSITION          = 30
@@ -49,48 +50,33 @@ ADDR_PRESENT_POSITION       = 37
 ADDR_VOLTAGE                = 45
 ADDR_TEMPERATURE            = 46
 
+# XL320 position variables
 DXL_ZERO_POSITION           = 512       # all servo zero pos are half of limit : 1024/2
 DXL_MIN_POS_DEC             = 0         # Refer to the CW Angle Limit of product eManual
 DXL_MAX_POS_DEC             = 1023      # Refer to the CCW Angle Limit of product eManual
-DXL_POS_THRESH_PERCENTAGE   = 5        # threshold of position accuracy of servos in %
-DXL_POS_THRESHOLD           = 15  #round(DXL_MAX_POS_DEC/DXL_POS_THRESH_PERCENTAGE) 
 
+# DXL_POS_THRESH_PERCENTAGE   = 5       # threshold of position accuracy of servos in %
+DXL_POS_THRESHOLD           = 15        # round(DXL_MAX_POS_DEC/DXL_POS_THRESH_PERCENTAGE) 
 DXL_MIN_POS_DEG             = -150
 DXL_MAX_POS_DEG             = 150
 
-# DYNAMIXEL Protocol Version (1.0 / 2.0)
-# https://emanual.robotis.com/docs/en/dxl/protocol2/
-PROTOCOL_VERSION            = 2.0
-
-# Factory default ID of all DYNAMIXEL is 1
-DXL_ID                      =  5
+# XL320 lists
+DXL_ID                      =  5        #temporary for easy testing
 DXL_ID_LIST                 = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16]
 DXL_ACTIVE_ID_LIST          = []
-DEVICENAME                  = '/dev/serial0'# '/dev/ttyAMA0'      # '/dev/ttyUSB0'
 
-TORQUE_ENABLE               = 1     # Value for enabling the torque
-TORQUE_DISABLE              = 0     # Value for disabling the torque
-DXL_MOVING_STATUS_THRESHOLD = 20    # Dynamixel moving status threshold
+TORQUE_ENABLE               = 1         # Value for enabling the torque
+TORQUE_DISABLE              = 0         # Value for disabling the torque
 
+# Make use of LED color selection of XL320 easier
 COLOR_OFF, COLOR_RED, COLOR_GREEN, COLOR_YELLOW, COLOR_BLUE, COLOR_PURPLE, COLOR_CYAN, COLOR_WHITE       = 0,1,2,3,4,5,6,7
 
 
 index = 0
 
-# Initialize PortHandler instance
-# Set the port path
-# Get methods and members of PortHandlerLinux or PortHandlerWindows
-portHandler = PortHandler(DEVICENAME)
-
-# Initialize PacketHandler instance
-# Set the protocol version
-# Get methods and members of Protocol1PacketHandler or Protocol2PacketHandler
-packetHandler = PacketHandler(PROTOCOL_VERSION)
-
-
 ##################__FUNCTIONS__##################
 
-def ConvertSpeed(rpm):
+def ConvertRPM2Dec(rpm):
     if rpm > 0:
         out = round(rpm / 0.111)    # range in joint mode is 0-1023 with 0.111 rpm/increment
     else:
@@ -99,7 +85,7 @@ def ConvertSpeed(rpm):
     if out > DXL_MAX_POS_DEC:
         out = DXL_MAX_POS_DEC
     
-    print("converted rpm: " , str(out))
+    # print("converted rpm: " , str(out))
     return out
 
 def MapRange(input,from_min,from_max,to_min,to_max):
@@ -107,7 +93,7 @@ def MapRange(input,from_min,from_max,to_min,to_max):
 
 def ConvertDecimal2Angle(decimal):
     angle = round(MapRange(decimal,DXL_MIN_POS_DEC,DXL_MAX_POS_DEC,DXL_MIN_POS_DEG,DXL_MAX_POS_DEG),2)
-    print("angle: " , str(angle))
+    # print("angle: " , str(angle))
     return angle
 
 def getch():
@@ -123,6 +109,7 @@ def BroadCastPing():
     broadcast_ping_list, result = packetHandler.broadcastPing(portHandler)
     if result != COMM_SUCCESS:
         print("BroadCastPing: %s" % packetHandler.getTxRxResult(result))
+    
     print("detected dynamixels:")
     for dxl_id in broadcast_ping_list:
         # print("[ID:%03d] model version : %d | firmware version : %d" % (dxl_id, broadcast_ping_list.get(dxl_id)[0], broadcast_ping_list.get(dxl_id)[1]))
@@ -164,9 +151,8 @@ def WriteBulk(id_list,adress,data_list):
         WriteData(id_list[i],adress,data_list[i])
 
 def MoveServo(id,position,rpm):
-    rpm_to_dec          = round(rpm / 0.111)
-    
-    WriteData(DXL_ID,ADDR_SPEED, rpm_to_dec)
+   
+    WriteData(DXL_ID,ADDR_SPEED, ConvertRPM2Dec(rpm))
     WriteData(DXL_ID,ADDR_GOAL_POSITION,position)
 
     while True:     # Waiting until the servo has achieved the goal position with accuracy threshold in mind
@@ -179,6 +165,11 @@ def MoveServo(id,position,rpm):
 
 #################################################
 
+# Initialize PortHandler instance, set the port path and get methods and members of PortHandlerLinux
+portHandler = PortHandler(DEVICENAME)
+
+# Initialize PacketHandler instance, set the protocol version and get methods and members of Protocol2PacketHandler
+packetHandler = PacketHandler(PROTOCOL_VERSION)
 
 # Open port
 if portHandler.openPort():
@@ -238,14 +229,9 @@ while len(DXL_ACTIVE_ID_LIST) > 1:
 
     MoveServo(DXL_ID,400,20)
 
-    # print("extra sleep...")
-    # time.sleep(1)
-
     MoveServo(DXL_ID,700,10)
 
-    # print("extra sleep...")
-    # time.sleep(1)
-
+#==========__End of code loop__==========
 print("No servos connected, shutting down script...")
 
 # Disable Dynamixel Torque
