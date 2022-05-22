@@ -46,7 +46,6 @@ I've had a lot of trouble with communication in the ROS version of this project 
 
 
 
-
 ## Repository layout
 
 The repository is devided in 2 parts:
@@ -101,6 +100,8 @@ While in theorie the OpenCM9.04 is only used as a pass-through board to connect 
     - maybe more, run the scripts to see which packages are missing...
 
 
+
+
 ## Update Journal
 
 | Date | Description | Visual |
@@ -111,7 +112,6 @@ While in theorie the OpenCM9.04 is only used as a pass-through board to connect 
 | 03/05/2022 | After seeing [this post](https://community.robotis.us/t/rpi-driving-dynamixel-from-uart-at-1mbps/603) and getting the idea of using the Klamp't library gave me a motivation boost to get back to work. | N/A |
 | 06/12/2021 | Trying to get the Dynamixel SDk working. | N/A |
 | 24/11/2021 | Creation of Repository. | N/A |
-
 
 
 
