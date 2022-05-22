@@ -105,7 +105,8 @@ While in theorie the OpenCM9.04 is only used as a pass-through board to connect 
 
 | Date | Description | Visual |
 | :-: | :-: | :-: |
-| 05/05/2022 |Basic motion of XL320 servo using the raspberry.py script and following the circuit diagram from the post below. (click to watch the video :point_right:) | [<img src="https://img.youtube.com/vi/1GMccslpn2s/0.jpg" alt="vid1" width="600"/>](https://www.youtube.com/shorts/1GMccslpn2s)
+| 22/05/2022 | Implemented motion with variable speed (click to watch the video :point_right:) | [<img src="https://img.youtube.com/vi/KgU2sS9Sp-Q/0.jpg" alt="vid2" width="600"/>](https://www.youtube.com/shorts/KgU2sS9Sp-Q)
+| 05/05/2022 | Basic motion of XL320 servo using the raspberry.py script and following the circuit diagram from the post below. (click to watch the video :point_right:) | [<img src="https://img.youtube.com/vi/1GMccslpn2s/0.jpg" alt="vid1" width="600"/>](https://www.youtube.com/shorts/1GMccslpn2s)
 | 03/05/2022 | After seeing [this post](https://community.robotis.us/t/rpi-driving-dynamixel-from-uart-at-1mbps/603) and getting the idea of using the Klamp't library gave me a motivation boost to get back to work. | N/A |
 | 06/12/2021 | Trying to get the Dynamixel SDk working. | N/A |
 | 24/11/2021 | Creation of Repository. | N/A |
