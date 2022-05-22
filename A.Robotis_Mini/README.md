@@ -24,7 +24,7 @@ Because that TTL pin is directly connected to the data pin of the XL320's, no sp
 | :-: | :-: |
 | _OLD | Folder containing old code. I keep it in case of. |
 | blink | Folder containing a blink sketch for the OpenCM9.04. This is necessary to prevent the microcontroller to sleep after ~40 seconds. |
-| mqtt.py | script in which I develop the code for communicating with the host pc over MQTT. 
+| mqtt.py | Script in which I develop the code for communicating with the host pc over MQTT. 
 | control.py | Script in which I develop code to control the XL320 servos using the Dynamixel SDK. 
 
 

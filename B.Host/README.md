@@ -2,28 +2,31 @@
 
 ## Table of contents
 
-- [a](#)
-- [b](#)
-- [c](#)
-- [d](#)
-- [e](#)
+- [Quick explanation](#quick-explanation)
+- [Files & Folders explanation](#files--folders-explanation)
 
 
 
-The OpenCM9.04 is not used to run code. It's only used to make the connection between the Pi and the servos easier.
-<img src="../visuals/circuit.png" alt="Italian Trulli" height="300">
+
+## Quick explanation
+
+Here we focus on 3 things:
+- Developing communication with the Raspberry Pi
+- Developing virtual environment in which we have a virtual robot
+- All major ***'brain-work'*** for the robot will happen on the Host
 
 
 
-**B.** Create a virtual environment in which I can test Inverse Kinematics, motion planning, etc
 
-# Development using Klamp't Library
+## Files & Folders explanation
 
-
-## Directory explenation
-
-* klampt: Compiled library as explained [here](https://github.com/krishauser/Klampt/blob/master/Cpp/docs/Tutorials/Install-Linux.md). 
-* robot: Directory containing all assets for Robotis Mini
-* individual files
-  * test_script.py
-  * test_world.xml
+| File/Folder | Description |
+| :-: | :-: |
+| klampt| Folder containing Klamp't library built from source. This is necessary to be able to use the Klamp't apps. Make sure to follow [these](https://github.com/krishauser/Klampt/blob/master/Cpp/docs/Tutorials/Install-Linux.md) instruction as explained in the main [README](../README.md#quick-start-guide) file. |
+| robot| Folder containing all assets to create the virtual Mini. |
+| terrains | Folder containing all assets to create the terrains in the virtual world. |
+| basic_simulation.py | Testing script for simulation. |
+| mini_control_virtual.py | Testing script for controlling the virtual robot. |
+| mqtt.py | Script in which I develop the code for communicating with the Pi over MQTT. |
+| world.xml | File containing the definition of all elements in the virtual world.| 
+| all other files | are in heavy testing so they aren't important right now. |
