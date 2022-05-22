@@ -127,4 +127,4 @@ While in theorie the OpenCM9.04 is only used as a pass-through board to connect 
 
 | Front | Electronics Close-up |
 | :-: | :-: |
-<img src="visuals\mini_real_front.jpg" alt="real front" widht="400px"/> | <img src="visuals\mini_real_back.jpg" alt="real back" width="400px"/>
+<img src="visuals\mini_real_front.jpg" alt="real front" width="400px"/> | <img src="visuals\mini_real_back.jpg" alt="real back" width="415px"/>
