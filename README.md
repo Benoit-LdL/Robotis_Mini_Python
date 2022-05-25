@@ -106,7 +106,7 @@ While in theorie the OpenCM9.04 is only used as a pass-through board to connect 
 
 | Date | Description | Visual |
 | :-: | :-: | :-: |
-| 22/05/2022 | Assembled Robotis Mini in Fusion360 using offical .step files to facilitate designing extra parts / components. I've allready made a bracket for the openCM9.04 and the Pi Zero. Here's the link to the project: [Fusion360](https://a360.co/3wL5V2N) | <img src="visuals\mini_virtual_manual_carousel.gif" alt="virtual carousel"/> |
+| 22/05/2022 | Assembled Robotis Mini in Fusion360 using offical .step files to facilitate designing extra parts / components. I've allready made a bracket for the openCM9.04 and the Pi Zero. Here's the link to the project: [Fusion360](https://a360.co/3wL5V2N) | <img src="visuals\mini_virtual_carousel.gif" alt="virtual carousel"/> |
 | 21/05/2022 | Implemented motion with variable speed. <br><br> click to watch the video :point_right: | [<img src="https://img.youtube.com/vi/KgU2sS9Sp-Q/0.jpg" alt="vid2"/>](https://www.youtube.com/shorts/KgU2sS9Sp-Q)
 | 05/05/2022 | Basic motion of XL320 servo using the raspberry.py script and following the circuit diagram from the post below. <br><br> click to watch the video :point_right: | [<img src="https://img.youtube.com/vi/1GMccslpn2s/0.jpg" alt="vid1"/>](https://www.youtube.com/shorts/1GMccslpn2s)
 | 03/05/2022 | After seeing [this post](https://community.robotis.us/t/rpi-driving-dynamixel-from-uart-at-1mbps/603) and getting the idea of using the Klamp't library gave me a motivation boost to get back to work. | N/A |
@@ -122,7 +122,7 @@ While in theorie the OpenCM9.04 is only used as a pass-through board to connect 
 
 | 360° | Back  |
 | :-: | :-: |
-<img src="visuals\mini_virtual_manual_carousel.gif" alt="virtual carousel" width="400px"/> | <img src="visuals\mini_virtual_back_angle_portrait.png" alt="virtual back angle" width="400px"/>
+<img src="visuals\mini_virtual_carousel.gif" alt="virtual carousel" width="400px"/> | <img src="visuals\mini_virtual_back_angle_portrait.png" alt="virtual back angle" width="400px"/>
 
 ### :point_right: Real
 
