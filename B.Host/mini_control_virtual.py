@@ -24,7 +24,7 @@ implementation = 1.1    #No max deviation & constraints| IKSUCCESS=true
 
 ###################################################
 ##############__SETTINGS__##############
-worldFile   = "test_world.xml"
+worldFile   = "world.xml"
 sleepTime   = 0.01
 show_labels = False
 max_angle   = 90
@@ -139,7 +139,7 @@ def solve_ik(robotlink,localpos,worldpos):
         s.setActiveDofs(mini_links_r_leg)
         print("New active DOFs:     " , str(s.getActiveDofs()))
         print("===========================================================")
-        s.setJointLimits([],[])
+        # s.setJointLimits([],[])
         s.setMaxIters = maxIters
         s.setTolerance = tol
         IKSucces = s.solve()
@@ -225,13 +225,13 @@ if __name__ == "__main__" :
         mini.setConfig(GetFullConfig(new_config))
 
         # Inverse Kinematics
-        # goalpoint = [0,0,0]
-        # goalpoint[0],goalpoint[1],goalpoint[2] = [0,CM2M(-4),CM2M(2)]
-        # q = solve_ik(leg_r_link,leg_r_localpos,goalpoint)
-        # mini.setConfig(q)
-        # vis.add("GOAL",coordinates.Point(goalpoint))
+        goalpoint = [0,0,0]
+        goalpoint[0],goalpoint[1],goalpoint[2] = [CM2M(4),CM2M(-4),CM2M(4)]
+        q = solve_ik(leg_r_link,leg_r_localpos,goalpoint)
+        mini.setConfig(q)
+        vis.add("GOAL",coordinates.Point(goalpoint))
 
-        vis.add("neck_lpos",coordinates.Point(Local2WorldPos(neck_link, neck_localpos)))
+        # vis.add("neck_lpos",coordinates.Point(Local2WorldPos(neck_link, neck_localpos)))
         vis.add("arm_l_lpos",coordinates.Point(Local2WorldPos(arm_l_link, arm_l_localpos)))
         vis.add("arm_r_lpos",coordinates.Point(Local2WorldPos(arm_r_link, arm_r_localpos)))
         vis.add("leg_l_lpos",coordinates.Point(Local2WorldPos(leg_l_link, leg_l_localpos)))
@@ -250,8 +250,8 @@ if __name__ == "__main__" :
         print("##__DEBUG__##")
         print("mini config:     " + str(GetTrimmedConfig(mini.getConfig())))
         #print("q:               " + str(q))
-        print("# joints:        " + str(mini.numLinks()))
-        print("# Drivers:       " + str(mini.numDrivers()))
+        # print("# joints:        " + str(mini.numLinks()))
+        # print("# Drivers:       " + str(mini.numDrivers()))
         print("Angle:           " + str(joint_angle))
         print("Joint;           " + str(joint))
         print("iteration:       " + str(iteration))

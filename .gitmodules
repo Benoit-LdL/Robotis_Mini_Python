@@ -1,3 +1,9 @@
 [submodule "DynamixelSDK"]
 	path = DynamixelSDK
 	url = https://github.com/ROBOTIS-GIT/DynamixelSDK
+[submodule "B.Host/Klampt"]
+	path = B.Host/Klampt
+	url = https://github.com/krishauser/Klampt
+[submodule "B.Host/klampt/Cpp/Dependencies/KrisLibrary"]
+	path = B.Host/klampt/Cpp/Dependencies/KrisLibrary
+	url = https://github.com/krishauser/KrisLibrary
