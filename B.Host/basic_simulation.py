@@ -52,7 +52,7 @@ if __name__ == "__main__":
     print("   The demo simulates a world and reads a force sensor")
     print("================================================================")
     world = klampt.WorldModel()
-    res = world.readFile("test_world.xml")
+    res = world.readFile("world.xml")
     if not res:
         raise RuntimeError("Unable to load world")
     

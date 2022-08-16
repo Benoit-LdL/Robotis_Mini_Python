@@ -52,7 +52,7 @@ mini_links = [  11,             # neck          0                       0       
                 38,             # l_shoulder    6                       2           -90 90                  15  l_hip_link          63  r_hip_link
                 41,             # l_biceps      7                       4           -90 90                  19  l_thigh_link        67  r_thigh_link
                 45,             # l_elbow       8                       6           -90 90                  23  l_knee_link         71  r_knee_link
-                                #                                                                   27  l_ankle_link        75  r_ankle_link
+                                #                                                                           27  l_ankle_link        75  r_ankle_link
                 63,             # r_hip         9                       7           -45 90                  31  l_foot_link         79  r_foot_link
                 67,             # r_thigh       10                      9           -xx xx
                 71,             # r_knee        11                      11          -xx xx
@@ -69,9 +69,9 @@ mini_links_r_arm = [86, 89, 93]         # Last element is end effector
 mini_links_l_leg = [15, 19, 23, 27, 31] # Last element is end effector
 mini_links_r_leg = [63, 67, 71, 75, 79] # Last element is end effector
 
-neck_localpos   = [0,           0,          0]   # end effector local position origin offset
-arm_l_localpos  = [0,           -MM2M(75),  0]   # end effector local position origin offset
-arm_r_localpos  = [0,           -MM2M(75),  0]   # end effector local position origin offset
+neck_localpos   = [0,           0,          0]          # end effector local position origin offset
+arm_l_localpos  = [0,           -MM2M(75),  0]          # end effector local position origin offset
+arm_r_localpos  = [0,           -MM2M(75),  0]          # end effector local position origin offset
 leg_l_localpos  = [-MM2M(30),   -MM2M(9),   MM2M(30)]   # end effector local position origin offset
 leg_r_localpos  = [MM2M(30),    -MM2M(9),   MM2M(30)]   # end effector local position origin offset
 
@@ -92,17 +92,6 @@ def GetFullConfig(trimmed_config):              # Converted config containing mo
     for x in range(0,len(trimmed_config)):
         full_config[mini_links[x]] = trimmed_config[x]
     return full_config
-
-def Local2WorldPos(robotlink,localpos=[0,0,0]):
-    obj = ik.objective(robotlink,local=localpos,world=[0,0,0])
-    (local,world) = obj.getPosition()
-    localToWorld = robotlink.getWorldPosition(local)
-    
-    # print("## Debug GetLocalPos func ##")
-    # print("local to world: " +  str(localToWorld))
-    # print("############################")
-
-    return localToWorld
 
 def solve_ik(robotlink,localpos,worldpos):
 
@@ -193,7 +182,7 @@ if __name__ == "__main__" :
     res = world.readFile(worldFile)
     if not res: RuntimeError("Unable to load world file")
 
-    mini        = world.robot(0)
+    mini = world.robot(0)
 
     arm_l_linkIndex = mini_links_l_arm[len(mini_links_l_arm)-1]
     arm_r_linkIndex = mini_links_r_arm[len(mini_links_r_arm)-1]
@@ -216,7 +205,7 @@ if __name__ == "__main__" :
     vis.show()
     iteration   = 0
     joint_angle = 0.0
-    joint       = 2
+    joint       = 16
     while vis.shown():
         vis.lock()
         
@@ -226,19 +215,19 @@ if __name__ == "__main__" :
 
         # Inverse Kinematics
         goalpoint = [0,0,0]
-        goalpoint[0],goalpoint[1],goalpoint[2] = [CM2M(4),CM2M(-4),CM2M(4)]
+        goalpoint[0],goalpoint[1],goalpoint[2] = [CM2M(8),CM2M(-4),CM2M(4)]
         q = solve_ik(leg_r_link,leg_r_localpos,goalpoint)
         mini.setConfig(q)
         vis.add("GOAL",coordinates.Point(goalpoint))
 
-        # vis.add("neck_lpos",coordinates.Point(Local2WorldPos(neck_link, neck_localpos)))
-        vis.add("arm_l_lpos",coordinates.Point(Local2WorldPos(arm_l_link, arm_l_localpos)))
-        vis.add("arm_r_lpos",coordinates.Point(Local2WorldPos(arm_r_link, arm_r_localpos)))
-        vis.add("leg_l_lpos",coordinates.Point(Local2WorldPos(leg_l_link, leg_l_localpos)))
-        vis.add("leg_r_lpos",coordinates.Point(Local2WorldPos(leg_r_link, leg_r_localpos)))
+        # vis.add("neck_lpos",coordinates.Point(neck_link.getWorldPosition(neck_localpos)))
+        vis.add("arm_l_lpos",coordinates.Point(arm_l_link.getWorldPosition(arm_l_localpos)))
+        vis.add("arm_r_lpos",coordinates.Point(arm_r_link.getWorldPosition(arm_r_localpos)))
+        vis.add("leg_l_lpos",coordinates.Point(leg_l_link.getWorldPosition(leg_l_localpos)))
+        vis.add("leg_r_lpos",coordinates.Point(leg_r_link.getWorldPosition(leg_r_localpos)))
         
 
-        testPoint = Local2WorldPos(leg_r_link,leg_r_localpos)
+        testPoint = leg_r_link.getWorldPosition(leg_r_localpos)
         testPoint[0] += CM2M(10)                                 #put testpoint x cm in front of l_leg lpos
         vis.add("TestPoint",coordinates.Point(testPoint))
 

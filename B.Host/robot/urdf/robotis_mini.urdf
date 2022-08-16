@@ -1,24 +1,5 @@
 <?xml version="1.0" ?>
 <robot name="robotis_mini">
-  <!--
-  <xacro:property name="MESHVOLUME_DMFB01" value="19027.634766" />
-  <xacro:property name="MESHVOLUME_DMBB02" value="17309.392578" />
-  <xacro:property name="MESHVOLUME_DMFB03" value="4172.618164" />
-  <xacro:property name="MESHVOLUME_DMFB04" value="5622.555664" />
-  <xacro:property name="MESHVOLUME_DMFB05" value="8814.262695" />
-  <xacro:property name="MESHVOLUME_DMFB06" value="13174.791992" />
-  <xacro:property name="MESHVOLUME_DMFB07" value="6234.946777" />
-  <xacro:property name="MESHVOLUME_DMFF01" value="14216.210938" />
-  <xacro:property name="MESHVOLUME_SPU5"   value="690.421204" />
-  <xacro:property name="MESHVOLUME_SPD3B3" value="508.287537" />
-  <xacro:property name="MESHVOLUME_SPD3B5" value="862.646484" />
-  <xacro:property name="MESHVOLUME_SPD3B7" value="1217.040894" />
-  <xacro:property name="MESHVOLUME_SPD4B5" value="1157.969116" />
-  <xacro:property name="MESHVOLUME_SPD7V4" value="1055.941406" />
-  <xacro:property name="MESHVOLUME_SPL2B2" value="591.031128" />
-  <xacro:property name="MESHVOLUME_SPO5"   value="511.205475" />
-  <xacro:property name="MESHVOLUME_XL320"  value="16403.394531" />
-  -->
   <link name="base_link"/>
   <joint name="body_skeleton_joint" type="fixed">
     <origin rpy="1.5707963267948966 0 1.5707963267948966" xyz="0 0 0"/>
